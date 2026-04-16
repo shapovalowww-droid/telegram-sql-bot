@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "level": "beginner",
+    "level_label": "Начинающий",
+    "title": "Выборка всех товаров",
+    "description": "Есть таблица `products` с полями: `id`, `name`, `price`, `category`.\n\nВыбери название и цену всех товаров.",
+    "hint": "Используй SELECT с указанием нужных столбцов.",
+    "solution": "SELECT name, price FROM products;"
+  },
+  {
+    "id": 2,
+    "level": "beginner",
+    "level_label": "Начинающий",
+    "title": "Фильтрация по условию",
+    "description": "Таблица `employees`: `id`, `name`, `department`, `salary`.\n\nНайди всех сотрудников отдела 'Разработка' с зарплатой выше 80000.",
+    "hint": "Используй WHERE с двумя условиями через AND.",
+    "solution": "SELECT * FROM employees\nWHERE department = 'Разработка' AND salary > 80000;"
+  },
+  {
+    "id": 3,
+    "level": "beginner",
+    "level_label": "Начинающий",
+    "title": "Топ-5 дорогих товаров",
+    "description": "Таблица `products`: `id`, `name`, `price`.\n\nВыведи 5 самых дорогих товаров (название и цену).",
+    "hint": "ORDER BY + LIMIT.",
+    "solution": "SELECT name, price FROM products\nORDER BY price DESC\nLIMIT 5;"
+  },
+  {
+    "id": 4,
+    "level": "medium",
+    "level_label": "Средний",
+    "title": "Статистика заказов по пользователям",
+    "description": "Таблица `orders`: `id`, `user_id`, `amount`, `status`.\n\nДля каждого пользователя посчитай количество заказов и общую сумму. Выведи только тех, у кого больше 3 заказов.",
+    "hint": "GROUP BY + COUNT + SUM + HAVING.",
+    "solution": "SELECT user_id,\n       COUNT(*) AS order_count,\n       SUM(amount) AS total_amount\nFROM orders\nGROUP BY user_id\nHAVING COUNT(*) > 3;"
+  },
+  {
+    "id": 5,
+    "level": "medium",
+    "level_label": "Средний",
+    "title": "Клиенты без заказов",
+    "description": "Таблицы: `users` (id, name, email) и `orders` (id, user_id, amount).\n\nНайди всех пользователей, которые ещё не сделали ни одного заказа.",
+    "hint": "LEFT JOIN + WHERE ... IS NULL.",
+    "solution": "SELECT u.id, u.name, u.email\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id\nWHERE o.id IS NULL;"
+  },
+  {
+    "id": 6,
+    "level": "medium",
+    "level_label": "Средний",
+    "title": "Товары дороже среднего",
+    "description": "Таблица `products`: `id`, `name`, `price`, `category`.\n\nВыведи товары, цена которых выше средней цены в их категории.",
+    "hint": "Коррелированный подзапрос или JOIN с подзапросом.",
+    "solution": "SELECT p.name, p.price, p.category\nFROM products p\nWHERE p.price > (\n  SELECT AVG(p2.price)\n  FROM products p2\n  WHERE p2.category = p.category\n);"
+  },
+  {
+    "id": 7,
+    "level": "advanced",
+    "level_label": "Продвинутый",
+    "title": "Рейтинг продаж по месяцам",
+    "description": "Таблица `orders`: `id`, `user_id`, `amount`, `created_at` (TIMESTAMP).\n\nВыведи суммарные продажи по месяцам за последний год, отсортированные от большего к меньшему.",
+    "hint": "DATE_FORMAT / strftime + GROUP BY + WHERE на дату.",
+    "solution": "-- PostgreSQL:\nSELECT DATE_TRUNC('month', created_at) AS month,\n       SUM(amount) AS total\nFROM orders\nWHERE created_at >= NOW() - INTERVAL '1 year'\nGROUP BY month\nORDER BY total DESC;\n\n-- SQLite:\nSELECT strftime('%Y-%m', created_at) AS month,\n       SUM(amount) AS total\nFROM orders\nWHERE created_at >= date('now', '-1 year')\nGROUP BY month\nORDER BY total DESC;"
+  },
+  {
+    "id": 8,
+    "level": "advanced",
+    "level_label": "Продвинутый",
+    "title": "Нарастающий итог (Running Total)",
+    "description": "Таблица `sales`: `id`, `sale_date`, `amount`.\n\nВыведи дату, сумму продажи и нарастающий итог по дате.",
+    "hint": "Оконная функция SUM() OVER (ORDER BY ...).",
+    "solution": "SELECT sale_date,\n       amount,\n       SUM(amount) OVER (ORDER BY sale_date) AS running_total\nFROM sales\nORDER BY sale_date;"
+  }
+]

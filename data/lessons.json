@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "title": "SELECT — выборка данных",
+    "theory": "SELECT — основная команда SQL для получения данных из таблицы.\n\n`SELECT column1, column2 FROM table_name;`\n\nЧтобы выбрать все столбцы:\n`SELECT * FROM table_name;`",
+    "example": "SELECT name, age FROM users;\nSELECT * FROM products;",
+    "task": "Напиши запрос, который выбирает поля `title` и `price` из таблицы `books`.",
+    "answer": "SELECT title, price FROM books;"
+  },
+  {
+    "id": 2,
+    "title": "WHERE — фильтрация строк",
+    "theory": "WHERE позволяет отфильтровать строки по условию.\n\nОператоры: `=`, `!=`, `>`, `<`, `>=`, `<=`, `BETWEEN`, `IN`, `LIKE`, `IS NULL`",
+    "example": "SELECT * FROM users WHERE age > 18;\nSELECT * FROM products WHERE price BETWEEN 100 AND 500;\nSELECT * FROM users WHERE name LIKE 'А%';",
+    "task": "Выбери все товары из таблицы `products`, у которых `price` больше 1000.",
+    "answer": "SELECT * FROM products WHERE price > 1000;"
+  },
+  {
+    "id": 3,
+    "title": "ORDER BY — сортировка",
+    "theory": "ORDER BY сортирует результат по одному или нескольким столбцам.\n\n`ASC` — по возрастанию (по умолчанию)\n`DESC` — по убыванию",
+    "example": "SELECT * FROM users ORDER BY age DESC;\nSELECT name, price FROM products ORDER BY price ASC, name DESC;",
+    "task": "Выбери все записи из таблицы `orders` и отсортируй их по полю `created_at` от новых к старым.",
+    "answer": "SELECT * FROM orders ORDER BY created_at DESC;"
+  },
+  {
+    "id": 4,
+    "title": "GROUP BY и агрегатные функции",
+    "theory": "GROUP BY группирует строки с одинаковыми значениями.\n\nАгрегатные функции:\n• `COUNT()` — количество строк\n• `SUM()` — сумма\n• `AVG()` — среднее\n• `MIN()` / `MAX()` — минимум / максимум",
+    "example": "SELECT category, COUNT(*) FROM products GROUP BY category;\nSELECT user_id, SUM(amount) AS total FROM orders GROUP BY user_id;",
+    "task": "Посчитай количество заказов для каждого `user_id` в таблице `orders`.",
+    "answer": "SELECT user_id, COUNT(*) AS order_count FROM orders GROUP BY user_id;"
+  },
+  {
+    "id": 5,
+    "title": "HAVING — фильтрация групп",
+    "theory": "HAVING работает как WHERE, но применяется после GROUP BY — фильтрует уже сгруппированные данные.\n\nWHERE фильтрует строки ДО группировки.\nHAVING фильтрует группы ПОСЛЕ группировки.",
+    "example": "SELECT category, COUNT(*) AS cnt\nFROM products\nGROUP BY category\nHAVING cnt > 5;",
+    "task": "Найди `user_id` из таблицы `orders`, у которых суммарный `amount` больше 10000.",
+    "answer": "SELECT user_id, SUM(amount) AS total FROM orders GROUP BY user_id HAVING total > 10000;"
+  },
+  {
+    "id": 6,
+    "title": "JOIN — объединение таблиц",
+    "theory": "JOIN соединяет строки из двух таблиц по условию.\n\nВиды JOIN:\n• `INNER JOIN` — только совпадающие строки\n• `LEFT JOIN` — все из левой + совпадения из правой\n• `RIGHT JOIN` — все из правой + совпадения из левой\n• `FULL JOIN` — все строки из обеих таблиц",
+    "example": "SELECT u.name, o.amount\nFROM users u\nINNER JOIN orders o ON u.id = o.user_id;\n\nSELECT u.name, o.amount\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id;",
+    "task": "Выбери имена пользователей (`users.name`) и суммы их заказов (`orders.amount`), включая пользователей без заказов.",
+    "answer": "SELECT u.name, o.amount FROM users u LEFT JOIN orders o ON u.id = o.user_id;"
+  },
+  {
+    "id": 7,
+    "title": "Подзапросы (Subqueries)",
+    "theory": "Подзапрос — это SELECT внутри другого SQL-запроса. Может использоваться в WHERE, FROM, SELECT.\n\nКоррелированный подзапрос выполняется для каждой строки внешнего запроса.",
+    "example": "-- В WHERE:\nSELECT * FROM products\nWHERE price > (SELECT AVG(price) FROM products);\n\n-- В FROM:\nSELECT t.category, t.avg_price\nFROM (SELECT category, AVG(price) AS avg_price FROM products GROUP BY category) t;",
+    "task": "Выбери все товары, цена которых выше средней цены по всем товарам таблицы `products`.",
+    "answer": "SELECT * FROM products WHERE price > (SELECT AVG(price) FROM products);"
+  },
+  {
+    "id": 8,
+    "title": "INSERT, UPDATE, DELETE",
+    "theory": "Команды изменения данных (DML):\n\n`INSERT INTO table (col1, col2) VALUES (v1, v2);`\n\n`UPDATE table SET col1 = v1 WHERE condition;`\n\n`DELETE FROM table WHERE condition;`\n\n⚠️ Всегда используй WHERE в UPDATE и DELETE, иначе изменятся/удалятся все строки!",
+    "example": "INSERT INTO users (name, age) VALUES ('Иван', 25);\nUPDATE users SET age = 26 WHERE id = 1;\nDELETE FROM users WHERE id = 1;",
+    "task": "Обнови поле `price` до значения 999 для товара с `id = 5` в таблице `products`.",
+    "answer": "UPDATE products SET price = 999 WHERE id = 5;"
+  },
+  {
+    "id": 9,
+    "title": "Индексы",
+    "theory": "Индекс ускоряет поиск по таблице, но замедляет INSERT/UPDATE/DELETE.\n\n`CREATE INDEX idx_name ON table(column);`\n`CREATE UNIQUE INDEX idx_name ON table(column);`\n`DROP INDEX idx_name;`\n\nИндексы стоит создавать на столбцах, которые часто используются в WHERE, JOIN и ORDER BY.",
+    "example": "CREATE INDEX idx_users_email ON users(email);\nCREATE INDEX idx_orders_user ON orders(user_id);",
+    "task": "Создай индекс `idx_products_price` на столбце `price` таблицы `products`.",
+    "answer": "CREATE INDEX idx_products_price ON products(price);"
+  },
+  {
+    "id": 10,
+    "title": "Транзакции",
+    "theory": "Транзакция — группа операций, которые выполняются как одно целое.\n\n`BEGIN` / `START TRANSACTION` — начало\n`COMMIT` — сохранить изменения\n`ROLLBACK` — отменить изменения\n\nСвойства ACID: Atomicity, Consistency, Isolation, Durability.",
+    "example": "BEGIN;\nUPDATE accounts SET balance = balance - 500 WHERE id = 1;\nUPDATE accounts SET balance = balance + 500 WHERE id = 2;\nCOMMIT;",
+    "task": "Напиши транзакцию: спиши 100 с `account_id = 3` и начисли 100 на `account_id = 7` в таблице `accounts` (поле `balance`).",
+    "answer": "BEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE account_id = 3;\nUPDATE accounts SET balance = balance + 100 WHERE account_id = 7;\nCOMMIT;"
+  }
+]

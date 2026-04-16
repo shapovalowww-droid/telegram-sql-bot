@@ -1,0 +1,62 @@
+{
+  "SELECT": {
+    "syntax": "SELECT column1, column2 FROM table_name;",
+    "description": "Выбирает данные из таблицы. Используй `*` для всех столбцов.",
+    "example": "SELECT name, email FROM users;\nSELECT * FROM products WHERE price < 500;"
+  },
+  "WHERE": {
+    "syntax": "SELECT ... FROM table WHERE condition;",
+    "description": "Фильтрует строки по условию. Операторы: =, !=, >, <, >=, <=, BETWEEN, IN, LIKE, IS NULL.",
+    "example": "SELECT * FROM users WHERE age BETWEEN 18 AND 30;\nSELECT * FROM users WHERE city IN ('Москва', 'СПб');"
+  },
+  "ORDER BY": {
+    "syntax": "SELECT ... FROM table ORDER BY column [ASC|DESC];",
+    "description": "Сортирует результат. ASC — по возрастанию (умолчание), DESC — по убыванию.",
+    "example": "SELECT * FROM products ORDER BY price DESC;\nSELECT * FROM users ORDER BY last_name ASC, first_name ASC;"
+  },
+  "GROUP BY": {
+    "syntax": "SELECT column, AGG_FUNC(col) FROM table GROUP BY column;",
+    "description": "Группирует строки с одинаковыми значениями. Используется с агрегатными функциями.",
+    "example": "SELECT category, COUNT(*) FROM products GROUP BY category;\nSELECT user_id, SUM(amount) FROM orders GROUP BY user_id;"
+  },
+  "HAVING": {
+    "syntax": "SELECT ... GROUP BY column HAVING condition;",
+    "description": "Фильтрует группы после GROUP BY. Аналог WHERE, но для агрегированных данных.",
+    "example": "SELECT category, COUNT(*) AS cnt FROM products\nGROUP BY category HAVING cnt > 10;"
+  },
+  "JOIN": {
+    "syntax": "SELECT ... FROM t1 [INNER|LEFT|RIGHT] JOIN t2 ON t1.col = t2.col;",
+    "description": "Объединяет таблицы по условию.\n• INNER JOIN — только совпадения\n• LEFT JOIN — все из левой\n• RIGHT JOIN — все из правой",
+    "example": "SELECT u.name, o.amount FROM users u\nINNER JOIN orders o ON u.id = o.user_id;"
+  },
+  "INSERT": {
+    "syntax": "INSERT INTO table (col1, col2) VALUES (val1, val2);",
+    "description": "Добавляет новую строку в таблицу.",
+    "example": "INSERT INTO users (name, email, age) VALUES ('Анна', 'anna@mail.ru', 28);"
+  },
+  "UPDATE": {
+    "syntax": "UPDATE table SET col1 = val1 WHERE condition;",
+    "description": "Обновляет значения в существующих строках. ⚠️ Без WHERE — обновятся все строки!",
+    "example": "UPDATE products SET price = price * 1.1 WHERE category = 'Электроника';"
+  },
+  "DELETE": {
+    "syntax": "DELETE FROM table WHERE condition;",
+    "description": "Удаляет строки из таблицы. ⚠️ Без WHERE — удалятся все строки!",
+    "example": "DELETE FROM users WHERE last_login < '2023-01-01';"
+  },
+  "CREATE TABLE": {
+    "syntax": "CREATE TABLE table_name (col1 TYPE, col2 TYPE, ...);",
+    "description": "Создаёт новую таблицу. Типы данных: INT, VARCHAR(n), TEXT, BOOLEAN, DATE, TIMESTAMP.",
+    "example": "CREATE TABLE users (\n  id INT PRIMARY KEY AUTO_INCREMENT,\n  name VARCHAR(100) NOT NULL,\n  email VARCHAR(255) UNIQUE,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);"
+  },
+  "INDEX": {
+    "syntax": "CREATE INDEX idx_name ON table(column);",
+    "description": "Создаёт индекс для ускорения запросов. Используй на столбцах в WHERE, JOIN, ORDER BY.",
+    "example": "CREATE INDEX idx_email ON users(email);\nCREATE UNIQUE INDEX idx_slug ON articles(slug);"
+  },
+  "TRANSACTION": {
+    "syntax": "BEGIN; ... COMMIT; / ROLLBACK;",
+    "description": "Группирует операции в одну атомарную единицу. COMMIT — сохранить, ROLLBACK — отменить.",
+    "example": "BEGIN;\nUPDATE accounts SET balance = balance - 1000 WHERE id = 1;\nUPDATE accounts SET balance = balance + 1000 WHERE id = 2;\nCOMMIT;"
+  }
+}

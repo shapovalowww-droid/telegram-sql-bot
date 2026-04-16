@@ -1,0 +1,9 @@
+.env
+db/*.db
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+bot.log
+nohup.out
+.DS_Store

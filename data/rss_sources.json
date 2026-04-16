@@ -1,0 +1,8 @@
+{
+  "PostgreSQL Planet": "https://planet.postgresql.org/rss20.xml",
+  "SQLServerCentral": "https://www.sqlservercentral.com/feed",
+  "Dev.to SQL": "https://dev.to/feed/tag/sql",
+  "Dev.to Database": "https://dev.to/feed/tag/database",
+  "Use The Index Luke": "https://use-the-index-luke.com/blog/rss",
+  "DBA StackExchange": "https://dba.stackexchange.com/feeds"
+}
