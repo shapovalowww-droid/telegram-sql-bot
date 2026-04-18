@@ -1,8 +1,12 @@
 import aiosqlite
 from config import DB_PATH
 
+_user_cache: set[int] = set()
+
 
 async def upsert_user(user_id: int, username: str | None, first_name: str):
+    if user_id in _user_cache:
+        return
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute(
             """
@@ -15,6 +19,7 @@ async def upsert_user(user_id: int, username: str | None, first_name: str):
             (user_id, username, first_name),
         )
         await db.commit()
+    _user_cache.add(user_id)
 
 
 # --- Подписки ---
@@ -68,6 +73,18 @@ async def is_news_sent(url: str) -> bool:
             "SELECT 1 FROM sent_news WHERE url = ?", (url,)
         ) as cursor:
             return await cursor.fetchone() is not None
+
+
+async def get_sent_urls(urls: list[str]) -> set[str]:
+    if not urls:
+        return set()
+    placeholders = ",".join("?" * len(urls))
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute(
+            f"SELECT url FROM sent_news WHERE url IN ({placeholders})", urls
+        ) as cursor:
+            rows = await cursor.fetchall()
+            return {r[0] for r in rows}
 
 
 # --- Прогресс уроков ---

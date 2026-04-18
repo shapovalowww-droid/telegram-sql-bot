@@ -114,12 +114,24 @@ async def run(app: Application):
         await app.stop()
 
 
+async def error_handler(update: object, context) -> None:
+    logger.error("Exception while handling update:", exc_info=context.error)
+
+
 def main():
     if not BOT_TOKEN or BOT_TOKEN == "YOUR_BOT_TOKEN_HERE":
         print("Укажите токен бота в .env: BOT_TOKEN=...")
         return
 
-    app = Application.builder().token(BOT_TOKEN).build()
+    app = (
+        Application.builder()
+        .token(BOT_TOKEN)
+        .connect_timeout(30.0)
+        .read_timeout(30.0)
+        .write_timeout(30.0)
+        .pool_timeout(30.0)
+        .build()
+    )
 
     app.add_handler(CommandHandler("start", cmd_start))
     app.add_handler(CommandHandler("lessons", cmd_lessons))
@@ -132,6 +144,7 @@ def main():
     app.add_handler(CommandHandler("sources", cmd_sources))
     app.add_handler(CallbackQueryHandler(callback_router))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, show_menu))
+    app.add_error_handler(error_handler)
 
     app.job_queue.run_repeating(
         broadcast_news,

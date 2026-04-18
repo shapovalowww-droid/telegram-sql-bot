@@ -62,7 +62,7 @@ async def show_lesson(update: Update, context: ContextTypes.DEFAULT_TYPE, lesson
         f"📖 *Урок {lesson['id']}: {lesson['title']}*\n\n"
         f"{lesson['theory']}\n\n"
         f"*Пример:*\n```sql\n{lesson['example']}\n```\n\n"
-        f"*Задача:*\n_{lesson['task']}_"
+        f"*Задача:*\n{lesson['task']}"
     )
     await query.message.edit_text(
         text,
