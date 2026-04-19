@@ -28,6 +28,69 @@
   },
   {
     "id": 4,
+    "level": "beginner",
+    "level_label": "Начинающий",
+    "title": "Уникальные города",
+    "description": "Таблица `users`: `id`, `name`, `city`, `email`.\n\nПолучи список всех уникальных городов, в которых живут пользователи.",
+    "hint": "Используй DISTINCT.",
+    "solution": "SELECT DISTINCT city FROM users;"
+  },
+  {
+    "id": 5,
+    "level": "beginner",
+    "level_label": "Начинающий",
+    "title": "Поиск по шаблону",
+    "description": "Таблица `products`: `id`, `name`, `price`.\n\nНайди все товары, в названии которых есть слово 'Pro' (в любом месте).",
+    "hint": "Используй LIKE с символом % с обеих сторон.",
+    "solution": "SELECT * FROM products\nWHERE name LIKE '%Pro%';"
+  },
+  {
+    "id": 6,
+    "level": "beginner",
+    "level_label": "Начинающий",
+    "title": "Количество сотрудников",
+    "description": "Таблица `employees`: `id`, `name`, `department`.\n\nПосчитай общее количество сотрудников в компании.",
+    "hint": "Используй COUNT(*).",
+    "solution": "SELECT COUNT(*) AS total_employees FROM employees;"
+  },
+  {
+    "id": 7,
+    "level": "beginner",
+    "level_label": "Начинающий",
+    "title": "Товары в диапазоне цен",
+    "description": "Таблица `products`: `id`, `name`, `price`, `category`.\n\nВыбери все товары с ценой от 500 до 2000 рублей включительно.",
+    "hint": "Используй BETWEEN.",
+    "solution": "SELECT * FROM products\nWHERE price BETWEEN 500 AND 2000;"
+  },
+  {
+    "id": 8,
+    "level": "beginner",
+    "level_label": "Начинающий",
+    "title": "Пользователи без телефона",
+    "description": "Таблица `users`: `id`, `name`, `email`, `phone`.\n\nНайди всех пользователей, у которых не указан номер телефона.",
+    "hint": "Для проверки на NULL используй IS NULL, а не = NULL.",
+    "solution": "SELECT id, name, email FROM users\nWHERE phone IS NULL;"
+  },
+  {
+    "id": 9,
+    "level": "beginner",
+    "level_label": "Начинающий",
+    "title": "Сортировка сотрудников",
+    "description": "Таблица `employees`: `id`, `name`, `salary`, `department`.\n\nВыведи всех сотрудников, отсортированных сначала по отделу (А→Я), а внутри отдела — по убыванию зарплаты.",
+    "hint": "ORDER BY с двумя столбцами.",
+    "solution": "SELECT * FROM employees\nORDER BY department ASC, salary DESC;"
+  },
+  {
+    "id": 10,
+    "level": "beginner",
+    "level_label": "Начинающий",
+    "title": "Обновление цены",
+    "description": "Таблица `products`: `id`, `name`, `price`.\n\nПовысь цену всех товаров категории 'Электроника' на 10%.",
+    "hint": "UPDATE с умножением: price = price * 1.1",
+    "solution": "UPDATE products\nSET price = price * 1.1\nWHERE category = 'Электроника';"
+  },
+  {
+    "id": 11,
     "level": "medium",
     "level_label": "Средний",
     "title": "Статистика заказов по пользователям",
@@ -36,7 +99,7 @@
     "solution": "SELECT user_id,\n       COUNT(*) AS order_count,\n       SUM(amount) AS total_amount\nFROM orders\nGROUP BY user_id\nHAVING COUNT(*) > 3;"
   },
   {
-    "id": 5,
+    "id": 12,
     "level": "medium",
     "level_label": "Средний",
     "title": "Клиенты без заказов",
@@ -45,7 +108,7 @@
     "solution": "SELECT u.id, u.name, u.email\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id\nWHERE o.id IS NULL;"
   },
   {
-    "id": 6,
+    "id": 13,
     "level": "medium",
     "level_label": "Средний",
     "title": "Товары дороже среднего",
@@ -54,21 +117,138 @@
     "solution": "SELECT p.name, p.price, p.category\nFROM products p\nWHERE p.price > (\n  SELECT AVG(p2.price)\n  FROM products p2\n  WHERE p2.category = p.category\n);"
   },
   {
-    "id": 7,
+    "id": 14,
+    "level": "medium",
+    "level_label": "Средний",
+    "title": "Средняя зарплата по отделам",
+    "description": "Таблица `employees`: `id`, `name`, `department`, `salary`.\n\nВыведи среднюю зарплату по каждому отделу. Покажи только отделы, где средняя зарплата выше 70000. Отсортируй по убыванию средней зарплаты.",
+    "hint": "GROUP BY + AVG + HAVING + ORDER BY.",
+    "solution": "SELECT department,\n       AVG(salary) AS avg_salary\nFROM employees\nGROUP BY department\nHAVING AVG(salary) > 70000\nORDER BY avg_salary DESC;"
+  },
+  {
+    "id": 15,
+    "level": "medium",
+    "level_label": "Средний",
+    "title": "Самый дорогой товар в категории",
+    "description": "Таблица `products`: `id`, `name`, `price`, `category`.\n\nДля каждой категории найди название и цену самого дорогого товара.",
+    "hint": "JOIN таблицы с подзапросом, который находит MAX(price) по категориям.",
+    "solution": "SELECT p.category, p.name, p.price\nFROM products p\nINNER JOIN (\n  SELECT category, MAX(price) AS max_price\n  FROM products\n  GROUP BY category\n) m ON p.category = m.category AND p.price = m.max_price;"
+  },
+  {
+    "id": 16,
+    "level": "medium",
+    "level_label": "Средний",
+    "title": "Активные заказы с деталями",
+    "description": "Таблицы:\n• `orders`: `id`, `user_id`, `product_id`, `amount`, `status`\n• `users`: `id`, `name`\n• `products`: `id`, `name`, `price`\n\nВыведи имя пользователя, название товара и сумму для всех заказов со статусом 'active'.",
+    "hint": "JOIN трёх таблиц + WHERE.",
+    "solution": "SELECT u.name AS user_name,\n       p.name AS product_name,\n       o.amount\nFROM orders o\nJOIN users u ON o.user_id = u.id\nJOIN products p ON o.product_id = p.id\nWHERE o.status = 'active';"
+  },
+  {
+    "id": 17,
+    "level": "medium",
+    "level_label": "Средний",
+    "title": "Дублирующиеся email",
+    "description": "Таблица `users`: `id`, `name`, `email`.\n\nНайди все email-адреса, которые встречаются более одного раза (дубликаты).",
+    "hint": "GROUP BY email + HAVING COUNT(*) > 1.",
+    "solution": "SELECT email, COUNT(*) AS cnt\nFROM users\nGROUP BY email\nHAVING COUNT(*) > 1;"
+  },
+  {
+    "id": 18,
+    "level": "medium",
+    "level_label": "Средний",
+    "title": "Второй по величине оклад",
+    "description": "Таблица `employees`: `id`, `name`, `salary`.\n\nНайди второй по величине оклад в компании (без повторов).",
+    "hint": "Подзапрос с MAX и исключением максимума, или ORDER BY + LIMIT + OFFSET.",
+    "solution": "-- Вариант 1:\nSELECT MAX(salary) AS second_salary\nFROM employees\nWHERE salary < (SELECT MAX(salary) FROM employees);\n\n-- Вариант 2:\nSELECT DISTINCT salary\nFROM employees\nORDER BY salary DESC\nLIMIT 1 OFFSET 1;"
+  },
+  {
+    "id": 19,
+    "level": "medium",
+    "level_label": "Средний",
+    "title": "Перенос товаров между категориями",
+    "description": "Таблица `products`: `id`, `name`, `price`, `category`.\n\nВсе товары с ценой выше 50000 переведи в категорию 'Премиум'.",
+    "hint": "UPDATE с условием WHERE.",
+    "solution": "UPDATE products\nSET category = 'Премиум'\nWHERE price > 50000;"
+  },
+  {
+    "id": 20,
+    "level": "medium",
+    "level_label": "Средний",
+    "title": "Удаление старых заказов",
+    "description": "Таблица `orders`: `id`, `user_id`, `amount`, `status`, `created_at`.\n\nУдали все отменённые заказы (`status = 'cancelled'`), созданные до 2023 года.",
+    "hint": "DELETE с двумя условиями через AND.",
+    "solution": "DELETE FROM orders\nWHERE status = 'cancelled'\n  AND created_at < '2023-01-01';"
+  },
+  {
+    "id": 21,
     "level": "advanced",
     "level_label": "Продвинутый",
     "title": "Рейтинг продаж по месяцам",
     "description": "Таблица `orders`: `id`, `user_id`, `amount`, `created_at` (TIMESTAMP).\n\nВыведи суммарные продажи по месяцам за последний год, отсортированные от большего к меньшему.",
-    "hint": "DATE_FORMAT / strftime + GROUP BY + WHERE на дату.",
+    "hint": "DATE_TRUNC / strftime + GROUP BY + WHERE на дату.",
     "solution": "-- PostgreSQL:\nSELECT DATE_TRUNC('month', created_at) AS month,\n       SUM(amount) AS total\nFROM orders\nWHERE created_at >= NOW() - INTERVAL '1 year'\nGROUP BY month\nORDER BY total DESC;\n\n-- SQLite:\nSELECT strftime('%Y-%m', created_at) AS month,\n       SUM(amount) AS total\nFROM orders\nWHERE created_at >= date('now', '-1 year')\nGROUP BY month\nORDER BY total DESC;"
   },
   {
-    "id": 8,
+    "id": 22,
     "level": "advanced",
     "level_label": "Продвинутый",
     "title": "Нарастающий итог (Running Total)",
     "description": "Таблица `sales`: `id`, `sale_date`, `amount`.\n\nВыведи дату, сумму продажи и нарастающий итог по дате.",
     "hint": "Оконная функция SUM() OVER (ORDER BY ...).",
     "solution": "SELECT sale_date,\n       amount,\n       SUM(amount) OVER (ORDER BY sale_date) AS running_total\nFROM sales\nORDER BY sale_date;"
+  },
+  {
+    "id": 23,
+    "level": "advanced",
+    "level_label": "Продвинутый",
+    "title": "Ранжирование сотрудников по зарплате",
+    "description": "Таблица `employees`: `id`, `name`, `department`, `salary`.\n\nВыведи каждого сотрудника с его рангом внутри отдела по убыванию зарплаты (1 — самый высокооплачиваемый в отделе).",
+    "hint": "Оконная функция RANK() OVER (PARTITION BY ... ORDER BY ...).",
+    "solution": "SELECT name,\n       department,\n       salary,\n       RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS dept_rank\nFROM employees\nORDER BY department, dept_rank;"
+  },
+  {
+    "id": 24,
+    "level": "advanced",
+    "level_label": "Продвинутый",
+    "title": "CTE: топ-покупатели",
+    "description": "Таблицы: `users` (id, name), `orders` (id, user_id, amount).\n\nС помощью CTE найди топ-3 пользователей по суммарной сумме заказов и выведи их имена и итоговую сумму.",
+    "hint": "WITH cte AS (...) SELECT ... FROM cte.",
+    "solution": "WITH user_totals AS (\n  SELECT user_id, SUM(amount) AS total\n  FROM orders\n  GROUP BY user_id\n)\nSELECT u.name, ut.total\nFROM user_totals ut\nJOIN users u ON u.id = ut.user_id\nORDER BY ut.total DESC\nLIMIT 3;"
+  },
+  {
+    "id": 25,
+    "level": "advanced",
+    "level_label": "Продвинутый",
+    "title": "Пользователи с заказами в каждом месяце",
+    "description": "Таблица `orders`: `id`, `user_id`, `created_at`.\n\nНайди пользователей, которые делали заказы в каждом месяце 2024 года (все 12 месяцев).",
+    "hint": "GROUP BY user_id + COUNT(DISTINCT month) = 12.",
+    "solution": "SELECT user_id\nFROM orders\nWHERE created_at >= '2024-01-01' AND created_at < '2025-01-01'\nGROUP BY user_id\nHAVING COUNT(DISTINCT DATE_TRUNC('month', created_at)) = 12;"
+  },
+  {
+    "id": 26,
+    "level": "advanced",
+    "level_label": "Продвинутый",
+    "title": "Разница между соседними продажами",
+    "description": "Таблица `sales`: `id`, `sale_date`, `amount`.\n\nДля каждой продажи выведи её сумму и разницу с предыдущей продажей по дате.",
+    "hint": "Оконная функция LAG(amount) OVER (ORDER BY sale_date).",
+    "solution": "SELECT sale_date,\n       amount,\n       amount - LAG(amount) OVER (ORDER BY sale_date) AS diff_from_prev\nFROM sales\nORDER BY sale_date;"
+  },
+  {
+    "id": 27,
+    "level": "advanced",
+    "level_label": "Продвинутый",
+    "title": "Транзакция с откатом",
+    "description": "Таблица `accounts`: `id`, `owner`, `balance`.\n\nНапиши транзакцию: переведи 5000 с аккаунта id=1 на аккаунт id=2. Если баланс аккаунта id=1 меньше 5000 — откати транзакцию.",
+    "hint": "BEGIN; UPDATE; проверка баланса через SELECT; ROLLBACK или COMMIT.",
+    "solution": "BEGIN;\nUPDATE accounts SET balance = balance - 5000 WHERE id = 1;\nUPDATE accounts SET balance = balance + 5000 WHERE id = 2;\n\n-- Если баланс стал отрицательным — откатить\n-- (в реальном коде проверка делается на уровне приложения или через CHECK constraint)\nROLLBACK; -- или COMMIT; если баланс в порядке"
+  },
+  {
+    "id": 28,
+    "level": "advanced",
+    "level_label": "Продвинутый",
+    "title": "Рекурсивный CTE: иерархия",
+    "description": "Таблица `employees`: `id`, `name`, `manager_id` (NULL для CEO).\n\nВыведи всю иерархию подчинения начиная от CEO (у кого manager_id IS NULL) с указанием уровня вложенности.",
+    "hint": "Рекурсивный CTE: WITH RECURSIVE cte AS (базовый случай UNION ALL рекурсивный случай).",
+    "solution": "WITH RECURSIVE hierarchy AS (\n  -- Базовый случай: CEO\n  SELECT id, name, manager_id, 0 AS level\n  FROM employees\n  WHERE manager_id IS NULL\n\n  UNION ALL\n\n  -- Рекурсивный случай: подчинённые\n  SELECT e.id, e.name, e.manager_id, h.level + 1\n  FROM employees e\n  JOIN hierarchy h ON e.manager_id = h.id\n)\nSELECT level, name FROM hierarchy\nORDER BY level, name;"
   }
 ]
