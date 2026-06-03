@@ -38,11 +38,12 @@ def _extract_text(response) -> str:
     return "\n".join(parts).strip()
 
 
-async def run_turn(system_text: str, messages: list) -> tuple[str, list]:
+async def run_turn(system_text: str, messages: list, user_id: int) -> tuple[str, list]:
     """Прогоняет один ход пользователя через агентный цикл.
 
     Возвращает (текст ответа, обновлённый список messages).
     `messages` мутируется и возвращается, чтобы вызывающий код сохранил историю.
+    `user_id` нужен инструментам трекера откликов для привязки к пользователю.
     """
     client = _get_client()
     # Системный промпт кешируется: основной объём токенов (инструкции + профиль),
@@ -69,7 +70,7 @@ async def run_turn(system_text: str, messages: list) -> tuple[str, list]:
         tool_results = []
         for block in response.content:
             if getattr(block, "type", None) == "tool_use":
-                result = await dispatch(block.name, block.input)
+                result = await dispatch(block.name, block.input, user_id)
                 tool_results.append(
                     {"type": "tool_result", "tool_use_id": block.id, "content": result}
                 )

@@ -10,6 +10,7 @@ from agent.claude_agent import run_turn
 from agent.prompts import build_system
 from keyboards.menus import (
     BTN_ANALYZE,
+    BTN_APPLICATIONS,
     BTN_INTERVIEW,
     BTN_PROFILE,
     BTN_RESET,
@@ -48,6 +49,37 @@ ANALYZE_HINT = (
     "насколько ты подходишь, что подчеркнуть и какие пробелы закрыть."
 )
 
+APPLICATIONS_EMPTY = (
+    "В трекере пока пусто 📭\n\n"
+    "Найди вакансии (🔍) и попроси сохранить понравившиеся — например «сохрани эту вакансию» "
+    "или «я откликнулся на первую». Я буду вести список со статусами."
+)
+
+
+def _format_applications(apps: list) -> str:
+    lines = [f"📁 Твои отклики ({len(apps)}):\n"]
+    for app in apps:
+        status = db.STATUSES.get(app["status"], app["status"])
+        head = f"{app['id']}. {app['title']}"
+        if app.get("company"):
+            head += f" — {app['company']}"
+        lines.append(head)
+        detail = f"   Статус: {status}"
+        if app.get("url"):
+            detail += f" · {app['url']}"
+        lines.append(detail)
+        if app.get("note"):
+            lines.append(f"   📝 {app['note']}")
+    return "\n".join(lines)
+
+
+async def show_applications(update: Update, user_id: int) -> None:
+    apps = await db.list_applications(user_id)
+    if not apps:
+        await update.message.reply_text(APPLICATIONS_EMPTY)
+        return
+    await _reply_long(update, _format_applications(apps))
+
 
 async def _reply_long(update: Update, text: str) -> None:
     text = text or "Готово."
@@ -64,7 +96,7 @@ async def _run_agent(update: Update, user_id: int, user_text: str) -> None:
     await update.message.chat.send_action(ChatAction.TYPING)
 
     try:
-        reply, messages = await run_turn(system_text, messages)
+        reply, messages = await run_turn(system_text, messages, user_id)
     except Exception:  # noqa: BLE001
         logger.exception("Ошибка агента")
         await update.message.reply_text(
@@ -120,6 +152,9 @@ async def on_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     if text == BTN_ANALYZE:
         await db.set_mode(user_id, "analyze")
         await update.message.reply_text(ANALYZE_HINT)
+        return
+    if text == BTN_APPLICATIONS:
+        await show_applications(update, user_id)
         return
     if text == BTN_INTERVIEW:
         await db.set_mode(user_id, "interview")
