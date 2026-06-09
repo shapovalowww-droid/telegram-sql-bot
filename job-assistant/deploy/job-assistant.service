@@ -1,0 +1,26 @@
+# systemd-сервис для запуска бота 24/7 с автоперезапуском.
+#
+# Установка (на сервере):
+#   sudo cp deploy/job-assistant.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now job-assistant
+#
+# Если пользователь/пути отличаются от значений ниже (по умолчанию — Ubuntu на
+# Oracle Cloud, пользователь `ubuntu`), отредактируй User/WorkingDirectory/пути.
+
+[Unit]
+Description=Career Assistant Telegram bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/telegram-sql-bot/job-assistant
+EnvironmentFile=/home/ubuntu/telegram-sql-bot/job-assistant/.env
+ExecStart=/home/ubuntu/telegram-sql-bot/job-assistant/.venv/bin/python bot.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
